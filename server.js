@@ -1,23 +1,22 @@
-
-// Dependencies
+//Dependencies
 var express = require("express");
 var bodyParser = require("body-parser");
+var logger = require("morgan");
 var mongoose = require("mongoose");
 var exphbs = require('express-handlebars');
 var request = require("request");
 var cheerio = require("cheerio");
-var logger = require("morgan");
 
 
-// Express Setup
+//Express
 var app = express();
 
 
-// Mongoose Setup
+//Mongoose
 mongoose.Promise = Promise;
 
 
-// Handlebars Setup
+//Handlbars
 app.set('views', './app/views');
 app.engine('hbs', exphbs({
   extname: '.hbs',
@@ -28,42 +27,34 @@ app.engine('hbs', exphbs({
 app.set('view engine', '.hbs');
 
 
-// BodyParser
+//BodyParser
 app.use(bodyParser.urlencoded({ extended: true }));
 app.use(bodyParser.json());
 app.use(bodyParser.text());
 app.use(bodyParser.json({ type: "application/vnd.api+json" }));
 
 
-// Morgan middleware
+//Setup Morgan
 app.use(require('morgan')('dev'));
 
 
-// Require Models
+//Require Models
 var Note = require("./app/models/Note.js");
 var Article = require("./app/models/Article.js");
 
 
-// Index Route
+//public folder
+app.use(express.static('app/public'));
+
+
+//Index route
 app.get('/', function(req, res) {
   res.render('index');
 });
 
 
-// Mongoose Database configuration
-mongoose.connect("mongodb://heroku_dv4kf3rz:hr5gq8tlodio101i4sflgtod3@ds157873.mlab.com:57873/heroku_dv4kf3rz");
-var db = mongoose.connection;
 
-db.on("error", function(error) {
-  console.log("Mongoose Error: ", error);
-});
-
-db.once("open", function() {
-  console.log("Mongoose connection successful.");
-});
-
-
-//New York Times scrapper
+//Scrape the New York Times
 app.get("/scrape", function(req, res) {
   // First, we grab the body of the html with request
   console.log("you got here");
@@ -156,8 +147,7 @@ app.post("/api/deletesaved/:id", function (req, res) {
     }
     });
 });
-
-//Show Scrapped articles
+//all articles
 app.get("/articles", function(req, res) {
   // Grab every doc in the Articles array
   Article.find({}, function(error, doc) {
@@ -174,7 +164,7 @@ app.get("/articles", function(req, res) {
 
 
 
-//Deleate Note
+//
 app.post('/deletenote/:id', function(req, res) {
     // using the id passed in the id parameter,
     // prepare a query that finds the matching one in our db...
@@ -194,9 +184,6 @@ app.post('/deletenote/:id', function(req, res) {
             }
         });
 });
-
-
-
 
 
 //single article and note
@@ -250,37 +237,11 @@ app.post('/articles/:id', function(req, res) {
 });
 
 
-// Setup port
+
 var PORT = process.env.PORT || 3000;
 
 
-//Express server listener
+//Express listener
 app.listen(PORT, function() {
   console.log("App running on port 3000!");
 });
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
