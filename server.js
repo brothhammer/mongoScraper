@@ -12,11 +12,11 @@ var cheerio = require("cheerio");
 var app = express();
 
 
-//Mongoose
+//Setup Mongoose
 mongoose.Promise = Promise;
 
 
-//Handlbars
+//Setup Handlbars
 app.set('views', './app/views');
 app.engine('hbs', exphbs({
   extname: '.hbs',
@@ -27,14 +27,14 @@ app.engine('hbs', exphbs({
 app.set('view engine', '.hbs');
 
 
-//BodyParser
+//Setup BodyParser
 app.use(bodyParser.urlencoded({ extended: true }));
 app.use(bodyParser.json());
 app.use(bodyParser.text());
 app.use(bodyParser.json({ type: "application/vnd.api+json" }));
 
 
-//Setup Morgan
+//Setup Morgan 
 app.use(require('morgan')('dev'));
 
 
@@ -43,14 +43,15 @@ var Note = require("./app/models/Note.js");
 var Article = require("./app/models/Article.js");
 
 
-//public folder
+//Setup public folder
 app.use(express.static('app/public'));
 
 
-//Index route
+// -----------------   Index route   -----------------
 app.get('/', function(req, res) {
   res.render('index');
 });
+
 
 //Database configuration with mongoose
 var MONGODB_URI = "mongodb://heroku_4lmrjtfx:6h4k8lh9f539vm7cj42d4cp2ac@ds137336.mlab.com:37336/heroku_4lmrjtfx" || "mongodb://localhost/mongoHeadlines";
@@ -178,6 +179,7 @@ app.get("/articles", function(req, res) {
 });
 
 
+
 //
 app.post('/deletenote/:id', function(req, res) {
     // using the id passed in the id parameter,
@@ -200,7 +202,7 @@ app.post('/deletenote/:id', function(req, res) {
 });
 
 
-//single article and note
+//single article and a note
 app.get("/articles/:id", function(req, res) {
   // Using the id passed in the id parameter, prepare a query that finds the matching one in our db...
   Note.findOne({ "_id": req.params.id })
@@ -251,10 +253,11 @@ app.post('/articles/:id', function(req, res) {
 });
 
 
+//Setup port 
 var PORT = process.env.PORT || 3000;
 
 
-//Express listener
+//Express server listener
 app.listen(PORT, function() {
   console.log("App running on port 3000!");
 });
