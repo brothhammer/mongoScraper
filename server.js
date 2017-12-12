@@ -52,6 +52,21 @@ app.get('/', function(req, res) {
   res.render('index');
 });
 
+//Database configuration with mongoose
+var MONGODB_URI = "mongodb://heroku_4lmrjtfx:6h4k8lh9f539vm7cj42d4cp2ac@ds137336.mlab.com:37336/heroku_4lmrjtfx" || "mongodb://localhost/mongoHeadlines";
+
+//"mongodb://heroku_4lmrjtfx:6h4k8lh9f539vm7cj42d4cp2ac@ds137336.mlab.com:37336/heroku_4lmrjtfx" ||
+
+mongoose.connect(MONGODB_URI);
+var db = mongoose.connection;
+
+db.on("error", function(error) {
+  console.log("Mongoose Error: ", error);
+});
+
+db.once("open", function() {
+  console.log("Mongoose connection successful.");
+});
 
 
 //Scrape the New York Times
@@ -163,7 +178,6 @@ app.get("/articles", function(req, res) {
 });
 
 
-
 //
 app.post('/deletenote/:id', function(req, res) {
     // using the id passed in the id parameter,
@@ -235,7 +249,6 @@ app.post('/articles/:id', function(req, res) {
         }
     });
 });
-
 
 
 var PORT = process.env.PORT || 3000;
